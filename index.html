@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>24 - Time Management Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --text-color: #333;
+            --light-text: #f8f9fa;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .hero {
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .time-display {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 2rem 0;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .time-display:hover {
+            transform: scale(1.05);
+            color: var(--secondary-color);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            width: 30px;
+            background-color: var(--primary-color);
+            border-radius: 4px 4px 0 0;
+            transition: var(--transition);
+        }
+
+        .chart-bar:hover {
+            background-color: var(--accent-color);
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+
+        .chart-labels span {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+
+        tr {
+            transition: var(--transition);
+        }
+
+        tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            margin-right: 1rem;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .task-text {
+            flex-grow: 1;
+        }
+
+        .task-delete {
+            color: #ff4757;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .task-delete:hover {
+            color: #ff6b81;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #777;
+        }
+
+        .add-task {
+            display: flex;
+            margin-top: 1rem;
+        }
+
+        .add-task input {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+        }
+
+        .add-task button {
+            padding: 0.75rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .add-task button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .timer-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .timer-btn.start {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .timer-btn.pause {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .timer-btn.reset {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .timer-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            background-color: rgba(67, 97, 238, 0.2);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .donut-chart {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-color) 0% var(--percentage, 75%), #e0e0e0 var(--percentage, 75%) 100%);
+            transition: var(--transition);
+        }
+
+        .donut-chart:hover {
+            transform: scale(1.05);
+        }
+
+        .donut-hole {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 25px;
+            left: 25px;
+            background-color: var(--card-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tab:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 1rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-column a {
+            color: var(--light-text);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                right: 1rem;
+                top: 1.5rem;
+            }
+
+            nav {
+                display: none;
+                width: 100%;
+                padding-top: 1rem;
+            }
+
+            nav.active {
+                display: block;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .time-display {
+                font-size: 2.5rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            .footer-column {
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class=\"container header-content\">
+            <div class=\"logo\">
+                <span class=\"logo-icon\">⏰</span>
+                <h1>24/7 Time Manager</h1>
+            </div>
+            <button class=\"mobile-menu-btn\">☰</button>
+            <nav id=\"main-nav\">
+                <ul>
+                    <li><a href=\"#dashboard\">Dashboard</a></li>
+                    <li><a href=\"#tasks\">Tasks</a></li>
+                    <li><a href=\"#timer\">Timer</a></li>
+                    <li><a href=\"#analytics\">Analytics</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class=\"hero\">
+        <div class=\"container\">
+            <h2>Make Every Hour Count</h2>
+            <p>Track your time, manage your tasks, and boost your productivity with our 24/7 Time Management Dashboard.</p>
+            <div class=\"time-display\" id=\"current-time\">00:00:00</div>
+        </div>
+    </section>
+
+    <section id=\"dashboard\">
+        <div class=\"container\">
+            <h2>Your Dashboard</h2>
+            <div class=\"dashboard\">
+                <div class=\"card\">
+                    <div class=\"card-header\">
+                        <h3 class=\"card-title\">Time Distribution</h3>
+                        <div class=\"card-icon\">📊</div>
+                    </div>
+                    <div class=\"chart-container\" id=\"time-chart\">
+                        <!-- Chart will be generated by JavaScript -->
+                    </div>
+                    <div class=\"chart-labels\">
+                        <span>Work</span>
+                        <span>Break</span>
+                        <span>Meeting</span>
+                        <span>Learning</span>
+                        <span>Personal</span>
+                    </div>
+                </div>
+
+                <div class=\"card\">
+                    <div class=\"card-header\">
+                        <h3 class=\"card-title\">Daily Progress</h3>
+                        <div class=\"card-icon\">📈</div>
+                    </div>
+                    <div class=\"donut-chart\" style=\"--percentage: 65%\">
+                        <div class=\"donut-hole\">65%</div>
+                    </div>
+                    <div class=\"progress-container\">
+                        <div class=\"progress-bar\" style=\"width: 65%\"></div>
+                    </div>
+                    <p>You've completed 13 out of 20 tasks today</p>
+                </div>
+
+                <div class=\"card\">
+                    <div class=\"card-header\">
+                        <h3 class=\"card-title\">Quick Stats</h3>
+                        <div class=\"card-icon\">📋</div>
+                    </div>
+                    <div class=\"stat-grid\">
+                        <div class=\"stat-item\">
+                            <div class=\"stat-value\">8.5</div>
+                            <div class=\"stat-label\">Hours Worked</div>
+                        </div>
+                        <div class=\"stat-item\">
+                            <div class=\"stat-value\">4</div>
+                            <div class=\"stat-label\">Meetings</div>
+                        </div>
+                        <div class=\"stat-item\">
+                            <div class=\"stat-value\">13</div>
+                            <div class=\"stat-label\">Tasks Done</div>
+                        </div>
+                        <div class=\"stat-item\">
+                            <div class=\"stat-value\">7</div>
+                            <div class=\"stat-label\">Tasks Left</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id=\"tasks\">
+        <div class=\"container\">
+            <h2>Task Management</h2>
+            
+            <div class=\"tabs\">
+                <button class=\"tab active\" data-tab=\"today\">Today</button>
+                <button class=\"tab\" data-tab=\"upcoming\">Upcoming</button>
+                <button class=\"tab\" data-tab=\"completed\">Completed</button>
+            </div>
+            
+            <div class=\"tab-content active\" id=\"today-tab\">
+                <div class=\"card\">
+                    <div class=\"task-list\" id=\"today-tasks\">
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\">
+                            <span class=\"task-text\">Complete project proposal</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\">
+                            <span class=\"task-text\">Meeting with design team</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\" checked>
+                            <span class=\"task-text completed\">Send weekly report</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\">
+                            <span class=\"task-text\">Review client feedback</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                    </div>
+                    <div class=\"add-task\">
+                        <input type=\"text\" id=\"new-task\" placeholder=\"Add a new task...\">
+                        <button id=\"add-task-btn\">Add</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class=\"tab-content\" id=\"upcoming-tab\">
+                <div class=\"card\">
+                    <div class=\"task-list\">
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\">
+                            <span class=\"task-text\">Prepare presentation for Monday</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\">
+                            <span class=\"task-text\">Schedule quarterly planning</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\">
+                            <span class=\"task-text\">Research new project management tools</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class=\"tab-content\" id=\"completed-tab\">
+                <div class=\"card\">
+                    <div class=\"task-list\">
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\" checked>
+                            <span class=\"task-text completed\">Update website content</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\" checked>
+                            <span class=\"task-text completed\">Fix login page bug</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                        <div class=\"task-item\">
+                            <input type=\"checkbox\" class=\"task-checkbox\" checked>
+                            <span class=\"task-text completed\">Send invoices to clients</span>
+                            <button class=\"task-delete\">×</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id=\"timer\">
+        <div class=\"container\">
+            <h2>Pomodoro Timer</h2>
+            <div class=\"card\">
+                <div class=\"time-display\" id=\"pomodoro-timer\">25:00</div>
+                <div class=\"timer-controls\">
+                    <button class=\"timer-btn start\" id=\"timer-start\">Start</button>
+                    <button class=\"timer-btn pause\" id=\"timer-pause\">Pause</button>
+                    <button class=\"timer-btn reset\" id=\"timer-reset\">Reset</button>
+                </div>
+                <div class=\"progress-container\">
+                    <div class=\"progress-bar\" id=\"timer-progress\" style=\"width: 0%\"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id=\"analytics\">
+        <div class=\"container\">
+            <h2>Time Analytics</h2>
+            <div class=\"card\">
+                <div class=\"card-header\">
+                    <h3 class=\"card-title\">Weekly Time Allocation</h3>
+                    <div class=\"card-icon\">📅</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Activity</th>
+                            <th>Hours</th>
+                            <th>Percentage</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Development</td>
+                            <td>18.5</td>
+                            <td>37%</td>
+                            <td>
+                                <div class=\"progress-container\">
+                                    <div class=\"progress-bar\" style=\"width: 37%\"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Meetings</td>
+                            <td>12</td>
+                            <td>24%</td>
+                            <td>
+                                <div class=\"progress-container\">
+                                    <div class=\"progress-bar\" style=\"width: 24%\"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Planning</td>
+                            <td>8</td>
+                            <td>16%</td>
+                            <td>
+                                <div class=\"progress-container\">
+                                    <div class=\"progress-bar\" style=\"width: 16%\"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Learning</td>
+                            <td>6.5</td>
+                            <td>13%</td>
+                            <td>
+                                <div class=\"progress-container\">
+                                    <div class=\"progress-bar\" style=\"width: 13%\"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Other</td>
+                            <td>5</td>
+                            <td>10%</td>
+                            <td>
+                                <div class=\"progress-container\">
+                                    <div class=\"progress-bar\" style=\"width: 10%\"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class=\"container footer-content\">
+            <div class=\"footer-column\">
+                <h3>24/7 Time Manager</h3>
+                <p>Your ultimate companion for managing time effectively and boosting productivity.</p>
+            </div>
+            <div class=\"footer-column\">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href=\"#dashboard\">Dashboard</a></li>
+                    <li><a href=\"#tasks\">Tasks</a></li>
+                    <li><a href=\"#timer\">Timer</a></li>
+                    <li><a href=\"#analytics\">Analytics</a></li>
+                </ul>
+            </div>
+            <div class=\"footer-column\">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href=\"#\">Blog</a></li>
+                    <li><a href=\"#\">Productivity Tips</a></li>
+                    <li><a href=\"#\">Time Management Guide</a></li>
+                    <li><a href=\"#\">FAQ</a></li>
+                </ul>
+            </div>
+            <div class=\"footer-column\">
+                <h3>Contact</h3>
+                <ul>
+                    <li><a href=\"mailto:info@24timemanager.com\">info@24timemanager.com</a></li>
+                    <li><a href=\"tel:+1234567890\">+1 (234) 567-890</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class=\"container copyright\">
+            <p>&copy; 2023 24/7 Time Manager. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mainNav = document.getElementById('main-nav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+        });
+        
+        // Current Time Display
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // Time Distribution Chart
+        function createTimeChart() {
+            const chartContainer = document.getElementById('time-chart');
+            chartContainer.innerHTML = '';
+            
+            const data = [
+                { label: 'Work', value: 45, color: '#4361ee' },
+                { label: 'Break', value: 15, color: '#4cc9f0' },
+                { label: 'Meeting', value: 20, color: '#3f37c9' },
+                { label: 'Learning', value: 10, color: '#3a0ca3' },
+                { label: 'Personal', value: 10, color: '#7209b7' }
+            ];
+            
+            const containerWidth = chartContainer.offsetWidth;
+            const barWidth = (containerWidth - (data.length - 1) * 15) / data.length;
+            const maxValue = Math.max(...data.map(item => item.value));
+            
+            data.forEach((item, index) => {
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${(item.value / maxValue) * 100}%`;
+                bar.style.backgroundColor = item.color;
+                bar.style.left = `${index * (barWidth + 15)}px`;
+                bar.style.width = `${barWidth}px`;
+                
+                // Tooltip
+                bar.setAttribute('title', `${item.label}: ${item.value}%`);
+                
+                chartContainer.appendChild(bar);
+            });
+        }
+        
+        // Task Management
+        const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+        const taskDeleteButtons = document.querySelectorAll('.task-delete');
+        const addTaskBtn = document.getElementById('add-task-btn');
+        const newTaskInput = document.getElementById('new-task');
+        const todayTasksList = document.getElementById('today-tasks');
+        
+        taskCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const taskText = this.nextElementSibling;
+                if (this.checked) {
+                    taskText.classList.add('completed');
+                } else {
+                    taskText.classList.remove('completed');
+                }
+            });
+        });
+        
+        taskDeleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const taskItem = this.parentElement;
+                taskItem.style.opacity = '0';
+                setTimeout(() => {
+                    taskItem.remove();
+                }, 300);
+            });
+        });
+        
+        addTaskBtn.addEventListener('click', addNewTask);
+        newTaskInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addNewTask();
+            }
+        });
+        
+        
+    </script>
+</body>
+</html>
